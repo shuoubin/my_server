@@ -4,8 +4,9 @@
 #include <stdarg.h>
 #include "log.h"
 #include <pthread.h>
+#include <filesystem>
 using namespace std;
-
+namespace fs = std::filesystem;
 Log::Log()
 {
     m_count = 0;
@@ -22,6 +23,8 @@ Log::~Log()
 //异步需要设置阻塞队列的长度，同步不需要设置
 bool Log::init(const char *file_name, int close_log, int log_buf_size, int split_lines, int max_queue_size)
 {
+    fs::create_directories("./logs/");
+    
     //如果设置了max_queue_size,则设置为异步
     if (max_queue_size >= 1)
     {
@@ -45,6 +48,7 @@ bool Log::init(const char *file_name, int close_log, int log_buf_size, int split
  
     const char *p = strrchr(file_name, '/');
     char log_full_name[256] = {0};
+    strcpy(dir_name, "./logs/");
 
     if (p == NULL)
     {
